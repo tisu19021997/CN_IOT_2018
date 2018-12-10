@@ -7,11 +7,11 @@ IPAddress ip(192, 168, 0, 100); // IP address, may need to change depending on n
 EthernetServer server(80);  // create a server at port 80
 
 String HTTP_req;          // stores the HTTP request
-boolean LED_status = 0;   // state of LED, off by default
+boolean led_status = false;   // state of LED, off by default
 
 int led = 9;
 int brightness = 0;
-int fadeAmount = 5;
+int fadeAmount = 51;
 
 void setup()
 {
@@ -50,25 +50,37 @@ void loop()
                     //main style
                     client.println("<style>");
 
-                    client.println("</style>");
+                    client.println("</style>");  
                     client.println("<body class=\"bg-light\">");
                     client.println("<main role=\"main\" class=\"container\">");
                     client.println("<div class=\"control\">");
-
+                        
+                        //Process the state of LED
+                        LedProcess(client);
                         client.println("<div class=\"card\">");
                             client.println("<div class=\"card-header\">Light Control</div>");
                             client.println("<div class=\"card-body\">");
                                 client.println("<div class=\"card-title\"><h4>Light Switch</h4></div>");
                                 client.println("<p class=\"card-text\">Turn on or turn off the light.</p>");
+                                client.println("<p class=\"card-text\"> \
+                                     Current status:");
+                                client.println(led_status ? "<span class=\"text-success\">ON</span>" : "<span class=\"text-danger\">OFF</span>");
+                                client.println("<\p>");
                                 client.println("<form method=\"get\">");
-                                  client.println("<p> <input type=\"submit\" name=\"status\" value=\"on\" class=\"btn btn-danger\">");
-                                  client.println("<input type=\"submit\" name=\"status\" value=\"off\" class=\"btn btn-primary\"></p>");
+                                  client.println("<p> <input type=\"submit\" name=\"status\" value=\"on\" class=\"btn btn-success\">");
+                                  client.println("<input type=\"submit\" name=\"status\" value=\"off\" class=\"btn btn-danger\"></p>");
                                 client.println("</form>");
                             client.println("</div>");
                             client.println("<hr/>");
                             client.println("<div class=\"card-body\">");
                                   client.println("<div class=\"card-title\"><h4>Light Dimmer</h4></div>");
                                   client.println("<p class=\"card-text\">Increase or decrease light brightness.</p>");
+                                  client.println("<p class=\"card-text\"> \
+                                     Current brightness:");
+                                  client.println("<span class=\"text-info\">");
+                                  client.println(brightness);
+                                  client.println("</span>");
+                                  client.println("<\p>");
                                   client.println("<form method=\"get\">");
                                       client.println("<p> <input type=\"submit\" name=\"dimmer\" value=\"increase\" class=\"btn btn-light\">");
                                       client.println("<input type=\"submit\" name=\"dimmer\" value=\"decrease\" class=\"btn btn-dark\"></p>");
@@ -82,10 +94,11 @@ void loop()
                     client.println("</body>");
                     client.println("</html>");
                     Serial.print(HTTP_req);
-                    HTTP_req = "";    // finished with request, empty string
-                    break;
-                }
-                // every line of text received from the client ends with \r\n
+                    // Finished with request, empty string
+                    HTTP_req = ""; 
+                    break;         
+                }    
+                //Every line of text received from the client ends with \r\n
                 if (c == '\n') {
                     // last character on line of received text
                     // starting new line with next character read
@@ -95,22 +108,76 @@ void loop()
                     // a text character was received from client
                     currentLineIsBlank = false;
                 }
-
-                else {
-                    if(HTTP_req.indexOf("GET /?status=on")>=0)
-                        digitalWrite(led, HIGH);
-                    if(HTTP_req.indexOf("GET /?status=off")>=0)
-                        digitalWrite(led, LOW);
-                    if(HTTP_req.indexOf("GET /?dimmer=increase")>=0)
-                        brightness = brightness + fadeAmount;
-                        analogWrite(led,brightness);
-                    if(HTTP_req.indexOf("GET /?dimmer=decrease")>=0)
-                        brightness = brightness + fadeAmount;
-                        analogWrite(led,brightness);
-                }
+             
             } // end if (client.available())
         } // end while (client.connected())
-        delay(1);      // give the web browser time to receive the data
-        client.stop(); // close the connection
+        //Give the web time to response
+        delay(1); 
+        //Close the connection     
+        client.stop();
     } // end if (client)
+}
+
+void LedProcess(EthernetClient cl)
+{
+     int led = 9;
+    Serial.println("Current brightness:");
+    Serial.println(brightness);
+    //Turn on
+    if(HTTP_req.indexOf("GET /?status=on")>=0) {
+       led_status = true;
+       brightness = 255;
+       analogWrite(led,brightness);
+       digitalWrite(led, HIGH);
+    }
+    //Turn off
+    if(HTTP_req.indexOf("GET /?status=off")>=0) {
+       led_status = false;
+       brightness = 0;
+       digitalWrite(led, LOW);
+       analogWrite(led,brightness);
+    }
+    //Increase brightness
+    if(HTTP_req.indexOf("GET /?dimmer=increase")>=0) {
+       if(255 == brightness) {
+         cl.println("<script>");
+         cl.println("alert(\"Reached the highest brightness!\") ");
+         cl.println("</script>");
+       }
+       else {
+         if(isLedTurnOn(cl))
+         {
+           brightness = brightness + fadeAmount;
+         }  
+       }
+       analogWrite(led,brightness);
+    }
+    //Decrease brightness
+    if(HTTP_req.indexOf("GET /?dimmer=decrease")>=0) {
+       
+       if(brightness == 0 && led_status) {
+         cl.println("<script>");
+         cl.println("alert(\"Reached the lowest brightness!\") ");
+         cl.println("</script>");
+       }
+       else {
+         
+         if(isLedTurnOn(cl))
+         {
+           brightness = brightness - fadeAmount;
+         }
+       }
+       analogWrite(led,brightness);
+    }
+}
+
+boolean isLedTurnOn(EthernetClient cl) {
+    if(!led_status) {
+           cl.println("<script>");
+           cl.println("alert(\"Please turn on the light first!\") \
+           ");
+           cl.println("</script>");
+           return false;
+    }
+    else {return true;}
 }
