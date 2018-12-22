@@ -3,7 +3,8 @@
 
 // MAC address from Ethernet shield sticker under board
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
-IPAddress ip(192, 168, 0, 100); // IP address, may need to change depending on network
+//IPAddress ip(192, 168, 0, 100); // IP address, may need to change depending on network
+IPAddress ip(192,168,1,104);
 EthernetServer server(80);  // create a server at port 80
 
 String HTTP_req;          // stores the HTTP request
@@ -93,7 +94,8 @@ void loop()
                     client.println("</main>"); //container
                     client.println("</body>");
                     client.println("</html>");
-                    Serial.print(HTTP_req);
+                    Serial.println("Connected");
+                    //Serial.print(HTTP_req);
                     // Finished with request, empty string
                     HTTP_req = ""; 
                     break;         
