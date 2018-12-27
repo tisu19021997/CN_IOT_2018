@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Smarty Ho</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/"
+        crossorigin="anonymous">
+    <link rel="stylesheet" href="main.css">
+    <style>
+
+    </style>
+</head>
+
+<body>
+    <main role="main" class="container-fluid">
+        <header class="site-header">
+
+        </header>
+
+        <div class="content-area fw">
+            <ul class="nav nav-pills">
+                <li class="active">
+                    <a href="#light" data-toggle="tab">Light Control</a>
+                </li>
+                <li>
+                    <a href="#fire" data-toggle="tab">Fire Alarm</a>
+                </li>
+                <li>
+                    <a href="#rain" data-toggle="tab">Rain Detection</a>
+                </li>
+                <li>
+                    <a href="#plant" data-toggle="tab">Plant Watering</a>
+                </li>
+            </ul>
+
+            <div class="tab-content clearfix" data-interval="false">
+                <!--Light Control Pane-->
+                <div id="light" class="main-content tab-pane fade show active">
+
+                    <div class="main-content__body">
+                        <!--Slider-->
+                        <div id="light-control-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+                            <div class="carousel-inner">
+                                <div class="row carousel-item active">
+                                    <div class="jumbotron row">
+                                        <div class="col-md-12 col-12">
+                                            <h1 class="display-4">Light Control</h1>
+                                        </div>
+                                        <div class=" col-md-4 p-4">
+                                            <h4>Light Switch</h4>
+                                            <p class="lead">Your light is <b class="text-success">ON</b></p>
+                                            <hr class="my-4">
+                                            <p>Press the button to turn the light on or turn it off.</p>
+                                            <form method="GET">
+                                                <div class="btn-group">
+                                                    <button type="submit" class="btn btn-outline-success btn-lg" name="status"
+                                                        value="on" role="button">ON
+                                                    </button>
+                                                    <button type="submit" class="btn btn-outline-danger btn-lg" name="status"
+                                                        value="off" role="button">OFF
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class=" col-md-4 p-4">
+                                            <h4>Light Brightness</h4>
+                                            <p class="lead">Current brightness: <b class="text-info">255</b></p>
+                                            <hr class="my-4">
+                                            <p>Adjust brightness to fit with your circumstance.</p>
+                                            <form method="GET">
+                                                <div class="btn-group">
+                                                    <button type="submit" class="btn btn-outline-primary btn-lg" name="dimmer"
+                                                        value="increase" role="button">+</button>
+                                                    <button type="submit" class="btn btn-outline-primary btn-lg" name="dimmer"
+                                                        value="decrease" role="button">-</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="cold-md-4 p-4">
+                                            <h4>Light Color</h4>
+                                            <p class="lead">Current color: <b class="text-danger">RED</b></p>
+                                            <hr class="my-4">
+                                            <p>Change light color to fill the mood.</p>
+                                            <form method="GET">
+                                                <div class="btn-group">
+                                                    <button class="btn btn-outline-danger btn-lg" href="#" role="button"
+                                                        name="color" value="red">RED</button>
+                                                    <button class="btn btn-outline-success btn-lg" href="#" role="button"
+                                                        name="color" value="green">GREEN</button>
+                                                    <button class="btn btn-outline-primary btn-lg" href="#" role="button"
+                                                        name="color" value="blue">BLUE</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="carousel-item">
+                                    <div class="jumbotron">
+                                        <h4>Advices</h4>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ullamcorper
+                                            diam
+                                            vulputate varius eleifend. Proin nec ligula in urna euismod finibus. Donec
+                                            pellentesque et erat vel fermentum. Mauris mollis purus a justo efficitur
+                                            congue. Etiam semper dolor diam, at sagittis sem ultricies in. Suspendisse
+                                            interdum pharetra dignissim. Nullam venenatis convallis scelerisque.
+                                            Vestibulum
+                                            semper felis erat, et ultricies ex pharetra id.
+                                        </p>
+                                        <p>
+                                            Curabitur nec volutpat nibh. Suspendisse blandit enim consequat dui
+                                            tristique
+                                            pretium. Fusce posuere libero vel nunc imperdiet fermentum. Aliquam aliquam
+                                            pulvinar sagittis. Phasellus commodo vulputate mattis. Duis id leo vitae
+                                            enim
+                                            molestie egestas id at arcu. Fusce interdum dignissim velit in interdum. In
+                                            et
+                                            cursus ex. Morbi eu ligula maximus, consequat dolor nec, venenatis nunc.
+                                            Donec
+                                            congue elit et leo condimentum luctus. Praesent in mollis odio.
+                                            Pellentesque
+                                            habitant morbi tristique senectus et netus et malesuada fames ac turpis
+                                            egestas.
+                                            Curabitur quis tristique nisi. Praesent ante nunc, maximus ac dui vel,
+                                            rhoncus
+                                            consectetur nisi. Maecenas ac neque dapibus, auctor leo at, ultricies est.
+                                            Nam
+                                            sed elit sed neque scelerisque convallis.
+                                        </p>
+
+                                    </div>
+                                </div>
+                                <ol class="carousel-indicators carousel-indicators-numbers">
+                                    <li data-target="#light-control-carousel" data-slide-to="0" class="active">Controls</li>
+                                    <li data-target="#light-control-carousel" data-slide-to="1">Advices</li>
+                                </ol>
+                            </div>
+                        </div>
+                        <div class="row pd-2 justify-content-center">
+                            <div class="col-md-4 align-middle text-center">
+                                <h6>Sleep Mode</h6>
+                                <form method="GET">
+                                    <button type="submit" class="btn btn-outline-dark btn-lg rounded-circle" role="button"
+                                        name="mode" value="sleep"> <i class="fas fa-moon fa-1x"></i></button>
+                                </form>
+                            </div>
+                            <div class="col-md-4 align-middle text-center">
+                                <h6>Chilling Mode</h6>
+                                <form method="GET">
+                                    <button type="submit" class="btn btn-outline-warning btn-lg rounded-circle" role="button"
+                                        name="mode" value="chill"> <i class="fas fa-music fa-1x"></i></button>
+                                </form>
+                            </div>
+                            <div class="col-md-4 align-middle text-center">
+                                <h6>Focus Mode</h6>
+                                <form method="GET">
+                                    <button class="btn btn-outline-info btn-lg rounded-circle" role="button" name="mode"
+                                        value="focus"> <i class="fas fa-book-reader fa-1x"></i></button>
+                                </form>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--Fire Alarm Pane-->
+                <div id="fire" class="main-content tab-pane fade">
+                    <div class="main-content__header">
+                        <h1 class="display-4">Fire Alarm</h1>
+                    </div>
+                    <div class="main-content__body">
+                        <div id="fire-alarm-carousel" class="carousel slide" data-ride="carousel" data-interval="false">
+
+                            <div class="carousel-inner">
+                                <div class="carousel-item active">
+                                    <div class="jumbotron">
+                                        <h4>Gas Status</h4>
+                                        <p class="lead">Current Gas Percentage: <b class="text-success">5%</b></p>
+                                        <hr class="my-4">
+                                        <p>Adjust maximum gas percentage.</p>
+                                        <form method="GET">
+                                            <div class="form-group">
+                                                <div class="input-group input-group-lg mb-3">
+                                                    <input type="text" class="form-control" placeholder="Maximum Gas Percentage"
+                                                        aria-label="Maximum Gas Percentage" aria-describedby="button-addon2">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Set</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                                <div class="carousel-item">
+                                    <div class="jumbotron">
+                                        <h4>Advices</h4>
+                                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque ullamcorper
+                                            diam
+                                            vulputate varius eleifend. Proin nec ligula in urna euismod finibus. Donec
+                                            pellentesque et erat vel fermentum. Mauris mollis purus a justo efficitur
+                                            congue. Etiam semper dolor diam, at sagittis sem ultricies in. Suspendisse
+                                            interdum pharetra dignissim. Nullam venenatis convallis scelerisque.
+                                            Vestibulum
+                                            semper felis erat, et ultricies ex pharetra id.
+                                        </p>
+                                        <p>
+                                            Curabitur nec volutpat nibh. Suspendisse blandit enim consequat dui
+                                            tristique
+                                            pretium. Fusce posuere libero vel nunc imperdiet fermentum. Aliquam aliquam
+                                            pulvinar sagittis. Phasellus commodo vulputate mattis. Duis id leo vitae
+                                            enim
+                                            molestie egestas id at arcu. Fusce interdum dignissim velit in interdum. In
+                                            et
+                                            cursus ex. Morbi eu ligula maximus, consequat dolor nec, venenatis nunc.
+                                            Donec
+                                            congue elit et leo condimentum luctus. Praesent in mollis odio.
+                                            Pellentesque
+                                            habitant morbi tristique senectus et netus et malesuada fames ac turpis
+                                            egestas.
+                                            Curabitur quis tristique nisi. Praesent ante nunc, maximus ac dui vel,
+                                            rhoncus
+                                            consectetur nisi. Maecenas ac neque dapibus, auctor leo at, ultricies est.
+                                            Nam
+                                            sed elit sed neque scelerisque convallis.
+                                        </p>
+
+                                    </div>
+                                </div>
+                                <ol class="carousel-indicators carousel-indicators-numbers">
+                                    <li data-target="#fire-alarm-carousel" data-slide-to="0" class="active">Controls</li>
+                                    <li data-target="#fire-alarm-carousel" data-slide-to="1">Advices</li>
+                                </ol>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="rain">
+                    <h3>We applied clearfix to the tab-content to rid of the gap between the tab and the content</h3>
+                </div>
+                <div class="tab-pane" id="plant">
+                    <h3>We use css to change the background color of the content to be equal to the tab</h3>
+                </div>
+            </div>
+        </div>
+
+        </div>
+        <footer class="site-footer">
+
+
+        </footer>
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

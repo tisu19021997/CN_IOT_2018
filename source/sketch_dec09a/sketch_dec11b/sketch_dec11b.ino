@@ -45,20 +45,19 @@ void loop() {
     return;
   }
     
-  String jsonValue = "{\"t\":\""; //       {"t":"
-  jsonValue = jsonValue + (int) t; //      {"t":"24
-  jsonValue = jsonValue + "\",\"h\":\""; //{"t":"24","h":"
-  jsonValue = jsonValue + (int) h;       //{"t":"24","h":"60  
-  jsonValue = jsonValue + "\"}";         //{"t":"24","h":"60"}
-  String pvcloudCommand = "node /home/root/pvcloud_api.js action='add_value' value='"+jsonValue+"' value_type='JSON_TH' value_label='DHT11_READING' captured_datetime='2015-03-09+21:00' >> log.txt";
-  Serial.println(pvcloudCommand);
-  
-  system ( pvcloudCommand.buffer );
+//  String jsonValue = "{\"t\":\""; //       {"t":"
+//  jsonValue = jsonValue + (int) t; //      {"t":"24
+//  jsonValue = jsonValue + "\",\"h\":\""; //{"t":"24","h":"
+//  jsonValue = jsonValue + (int) h;       //{"t":"24","h":"60  
+//  jsonValue = jsonValue + "\"}";         //{"t":"24","h":"60"}
+//  String pvcloudCommand = "node /home/root/pvcloud_api.js action='add_value' value='"+jsonValue+"' value_type='JSON_TH' value_label='DHT11_READING' captured_datetime='2015-03-09+21:00' >> log.txt";
+//  Serial.println(pvcloudCommand);
+//  
+//  system ( pvcloudCommand.buffer );
   
   // Compute heat index
   // Must send in temp in Fahrenheit!
   float hi = dht.computeHeatIndex(f, h);
-
   Serial.print("Humidity: "); 
   Serial.print(h);
   Serial.print(" %\t");
