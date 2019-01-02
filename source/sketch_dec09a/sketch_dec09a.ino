@@ -1,5 +1,6 @@
 #include <SPI.h>
 #include <Ethernet.h>
+#include "pitch.h"
 
 // MAC address from Ethernet shield sticker under board
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
@@ -7,13 +8,28 @@ byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 IPAddress ip(192,168,1,104);
 EthernetServer server(80);  // create a server at port 80
 
-String HTTP_req;          // stores the HTTP request
+String HTTP_req;    // stores the HTTP request
+String current_color = "green";
+
 boolean led_status = false;   // state of LED, off by default
+boolean gas_status = false; //state of Gas Sensor
 
 int led = 9;
 int brightness = 0;
 int fadeAmount = 51;
 
+int gasPercent = 0;
+
+int maxSoilMoisture = 520;
+int minSoilMoisture = 420;
+int soilMoisture = 0;
+
+/*Speaker declecration*/
+int speakerPin = 9;
+int melody[] = {NOTE_C4, NOTE_G3,NOTE_G3, NOTE_A3, NOTE_G3,0, NOTE_B3, NOTE_C4};
+int noteDurations[] = {16, 8, 8, 4,4,4,4,4 };
+
+/*LED's functions*/
 boolean isLedTurnOn(EthernetClient cl) {
     if(!led_status) {
         cl.println("<script>");
@@ -47,21 +63,24 @@ void turnLedOff(int led = 9) {
     analogWrite(led,brightness);
 }
 
-void ledModeProcess(char* mode) {
-    if("sleep" == mode) {
+void ledColorProcess() {
+
+}
+
+/*Process Led Mode associated with GET request*/
+void ledModeProcess() {
+    if(HTTP_req.indexOf("GET /?mode=sleep")>=0) {
       if(!led_status) {turnLedOn(led);}
       brightness = 51;
     }
-
-    else if ("chill" == mode) {
+    else if(HTTP_req.indexOf("GET /?mode=chill")>=0) {
       if(!led_status) {turnLedOn(led);}
       brightness = 102;
     }
-
-    else if("focus" == mode) {
+    else if(HTTP_req.indexOf("GET /?mode=focus")>=0) {
       if(!led_status) {turnLedOn(led);}
       brightness = 153;
-    }
+    }  
 }
 
 void LedProcess(EthernetClient cl)
@@ -108,10 +127,74 @@ void LedProcess(EthernetClient cl)
         }
         analogWrite(led,brightness);
     }
+    
+    ledModeProcess();
+}
+
+/*GAS'functions*/
+boolean isGasTurnOn(EthernetClient cl) {
+    if(HTTP_req.indexOf("GET /?status=on")>=0) {
+        gas_status = true;
+    }
+    if(HTTP_req.indexOf("GET /?status=off")>=0) {
+        gas_status = false;
+    }
+    if(!gas_status) {
+        cl.println("<script>");
+        cl.println("alert(\"Please turn on the gas sensor first!\") \
+           ");
+        cl.println("</script>");
+        return gas_status;
+    }
+    else {return gas_status;}
+}
+
+void gasAlert() {
+   for (int thisNote = 0; thisNote < 8; thisNote++) {
+    int noteDuration = 1000/noteDurations[thisNote];
+    tone(speakerPin, melody[thisNote],noteDuration);
+    noTone(speakerPin);
+  }
+}
+
+void gasProcess(EthernetClient cl,int maxGas) {
+  if(isGasTurnOn) {
+    gasPercent = analogRead(A1);
+    if(gasPercent >= maxGas) {
+       gasAlert();
+       cl.println("<script>");
+       cl.println("alert(\"DANGER!DANGER!DANGER!\") ");
+       cl.println("</script>");
+    }
+    delay(1000);
+  }
+}
+
+/*Soil Moisture's functions*/
+void soilProcess(EthernetClient cl) {
+  soilMoisture = analogRead(A2);
+  int percentSoilMoisture = map(soilMoisture, minSoilMoisture, maxSoilMoisture, 100,0);
+  if(percentSoilMoisture<=0) {
+    percentSoilMoisture = 0;
+    cl.println("<script>");
+    cl.println("alert(\"Start Watering Plants!Pew Pew!\") ");
+    cl.println("</script>");
+    /*
+      Do something here
+    */
+  }
+  else if(percentSoilMoisture>=100) {
+    percentSoilMoisture = 100;
+  }
+  delay(1000);
 }
 
 void setup()
 {
+    /*Get board IP Adress
+      delay(1000);
+      system("ifconfig -a > /dev/ttyGS0");
+    */
     Ethernet.begin(mac, ip);  // initialize Ethernet device
     server.begin();           // start to listen for clients
     Serial.begin(9600);       // for diagnostics
@@ -150,6 +233,10 @@ void loop()
                     client.println("</style>");
                     client.println("<body>");
                     client.println("<main role='main' class='container-fluid'>");
+                    /*Start to process the led*/
+                    LedProcess(client);
+                    gasProcess(client,300);
+                    soilProcess(client);
                     client.println("<header class='site-header'>");
                     client.println("</header>");
                     client.println("<div class='content-area fw'>");
@@ -199,7 +286,7 @@ void loop()
                     client.println("</div>");
                     client.println("<div class=' col-md-4 p-4'>");
                     client.println("<h4>Light Switch</h4>");
-                    client.println("<p class='lead'>Your light is <b class='text-success'>ON</b></p>");
+                    client.println(led_status ? "<p class='lead'>Your light is <b class='text-success'>ON</b></p>" : "<p class='lead'>Your light is <b class='text-danger'>OFF</b></p>");
                     client.println("<hr class='my-4'>");
                     client.println("<p>Press the button to turn the light on or turn it off.</p>");
                     client.println("<form method='GET'>");
@@ -213,7 +300,9 @@ void loop()
                     client.println("</div>");
                     client.println("<div class='col-md-4 p-4'");
                     client.println("<h4>Light Brightness</h4>");
-                    client.println("<p class='lead'>Current brightness: <b class='text-info'>255</b></p>");
+                    client.println("<p class='lead'>Current brightness: <b class='text-info'>");
+                    client.println(brightness);
+                    client.println("</b></p>");
                     client.println("<hr class='my-4'>");
                     client.println("<p>Adjust brightness to fit with your circumstance.</p>");
                     client.println("<form method='GET'>");
@@ -225,14 +314,15 @@ void loop()
                     client.println("</div>");
                     client.println("<div class='col-md-4 p-4'>");
                     client.println("<h4>Light Color</h4>");
+                    /*TO-DO: Get the current color*/
                     client.println("<p class='lead'>Current color: <b class='text-danger'>RED</b></p>");
                     client.println("<hr class='my-4'>");
                     client.println("<p>Change light color to fill the mood.</p>");
                     client.println("<form method='GET'>");
                     client.println("<div class='btn-group'>");
-                    client.println("<button class='btn btn-outline-danger btn-lg' href='#' role='button' name='color' value='red'>RED</button>");
-                    client.println("<button class='btn btn-outline-success btn-lg' href='#' role='button' name='color' value='green'>GREEN</button>");
-                    client.println("<button class='btn btn-outline-primary btn-lg' href='#' role='button' name='color' value='blue'>BLUE</button>");
+                    client.println("<button class='btn btn-outline-danger btn-lg' role='button' name='color' value='red'>RED</button>");
+                    client.println("<button class='btn btn-outline-success btn-lg' role='button' name='color' value='green'>GREEN</button>");
+                    client.println("<button class='btn btn-outline-primary btn-lg' role='button' name='color' value='blue'>BLUE</button>");
                     client.println("</div>");
                     client.println("</form>");
                     client.println("</div>");
@@ -266,7 +356,9 @@ void loop()
                     client.println("</div>");
                     client.println("<div class='cold-md-3 col-3'>");
                     client.println("<h4>Gas Status</h4>");
-                    client.println("<p class='lead'>Current Gas Percentage: <b class='text-success' data-toggle='tooltip' data-placement='right' data-html='true' title='<span>You are safe.</span>' data-animation='true'>5%</b></p>");
+                    client.println("<p class='lead'>Current Gas Percentage: <b class='text-success' data-toggle='tooltip' data-placement='right' data-html='true' title='<span>You are safe.</span>' data-animation='true'>");
+                    client.println(gasPercent);
+                    client.println("</b></p>");
                     client.println("</div>");
                     client.println("<div class='col-md-4 col-4 offset-md-2'>");
                     client.println("<p>Adjust maximum gas percentage to fire the alarm.</p>");
@@ -306,19 +398,19 @@ void loop()
                     client.println("<div class='carousel-item active'>");
                     client.println("<div class='jumbotron row'>");
                     client.println("<div class='col-md-12 col-12'>");
-                    client.println("<h1 class='display-4'>Rain Prediction Control</h1>");
+                    client.println("<h1 class='display-4'>Plant Watering</h1>");
                     client.println("<div>");
                     client.println("<div class='col-md-3 col-3 border-right'>");
-                    client.println("<h4>Air Hudmidity</h4>");
-                    client.println("<p class='lead'>Current air hudmidity: <b class='text-success' data-toggle='tooltip' data-placement='right' data-html='true' title='<span>You are safe.</span>'data-animation='true'>5%</b></p>");
+                    client.println("<h4>Soil Hudmidity</h4>");
+                    client.println("<p class='lead'>Current soil hudmidity: <b class='text-success' data-toggle='tooltip' data-placement='right' data-html='true' title='<span>You are safe.</span>'data-animation='true'>5%</b></p>");
                     client.println("</div>");
                     client.println("<div class='col-md-5 col-5 border-right'>");
                     client.println("<h4>Controls</h4>");
-                    client.println("<p>Adjust maximum air hudmidity to hide the clothes.</p>");
+                    client.println("<p>Adjust maximum soil hudmidity to water the plants.</p>");
                     client.println("<form method='GET'>");
                     client.println("<div class='form-group'>");
                     client.println("<div class='input-group input-group-lg mb-3'>");
-                    client.println("<input type='text' class='form-control' placeholder='Maximum Air Humidity Percentage' aria-label='Maximum Air Humidity Percentage' aria-describedby='button-rain' name='humid'>");
+                    client.println("<input type='text' class='form-control' placeholder='Maximum Soil Humidity Percentage' aria-label='Maximum Soil Humidity Percentage' aria-describedby='button-rain' name='humid'>");
                     client.println("<div class='input-group-append'>");
                     client.println("<button type='submit' class='btn btn-outline-secondary' id='button-rain'>Set</button>");
                     client.println("</div>");
@@ -328,7 +420,7 @@ void loop()
                     client.println("</div>");
                     client.println("<div class='col-md-3 col-3 '>");
                     client.println("<h4>Emergency</h4>");
-                    client.println("<p>One hit to hide clothes from the rain.</p>");
+                    client.println("<p>One hit to water the plants.</p>");
                     client.println("<form method='GET'>");
                     client.println("<div class='form-group'>");
                     client.println("<div class='input-group input-group-lg mb-3'>");
@@ -351,8 +443,6 @@ void loop()
                     client.println("<li data-target='#rain-carousel' data-slide-to='0' class='active'>Controls</li>");
                     client.println("<li data-target='#rain-carousel' data-slide-to='1'>Advices</li>");
                     client.println("</ol>");
-                    client.println("</div>");
-                    client.println("</div>");
                     client.println("</div>");
                     client.println("</div>");
                     client.println("</div>");
