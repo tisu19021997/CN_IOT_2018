@@ -24,17 +24,17 @@
 
     <div class='content-area fw'>
         <ul class='nav nav-pills'>
-            <li class='active'>
-                <a href='#light' data-toggle='tab'>Light Control</a>
+            <li class='nav-item active'>
+                <a class='nav-link' href='#light' data-toggle='tab'>Light Control</a>
             </li>
             <li>
-                <a href='#fire' data-toggle='tab'>Fire Alarm</a>
+                <a class='nav-link' href='#fire' data-toggle='tab'>Fire Alarm</a>
             </li>
             <li>
-                <a href='#rain' data-toggle='tab'>Rain Detection</a>
+                <a class='nav-link' href='#rain' data-toggle='tab'>Rain Detection</a>
             </li>
             <li>
-                <a href='#plant' data-toggle='tab'>Plant Watering</a>
+                <a class='nav-link' href='#plant' data-toggle='tab'>Plant Watering</a>
             </li>
         </ul>
 
@@ -120,20 +120,20 @@
                                         </form>
                                     </div>
                                     <div class='col-md-4 p-4'>
-                                        <h4>Light Color</h4>
-                                        <p class='lead'>Current color: <b class='text-danger'>RED</b></p>
+                                        <h4>Light Placements</h4>
+                                        <p class='lead'>Control the lights on different places</p>
                                         <hr class='my-4'>
                                         <p>Change light color to fill the mood.</p>
                                         <form method='GET'>
                                             <div class='btn-group'>
                                                 <button class='btn btn-outline-danger btn-lg' role='button'
-                                                        name='color' value='red'>RED
+                                                        name='color' value='red'>Bedroom
                                                 </button>
                                                 <button class='btn btn-outline-success btn-lg' role='button'
-                                                        name='color' value='green'>GREEN
+                                                        name='color' value='green'>Balcony
                                                 </button>
                                                 <button class='btn btn-outline-primary btn-lg' role='button'
-                                                        name='color' value='blue'>BLUE
+                                                        name='color' value='blue'>Living room
                                                 </button>
                                             </div>
                                         </form>
@@ -220,25 +220,7 @@
                                             </div>
                                         </form>
                                     </div>
-                                    <div class='col-md-4 col-4 offset-md-2'>
-                                        <p>Adjust maximum gas percentage to fire the alarm.</p>
-                                        <form method='GET'>
-                                            <div class='form-group'>
-                                                <div class='input-group input-group-lg mb-3'>
-                                                    <input type='text' class='form-control'
-                                                           placeholder='Maximum Gas Percentage'
-                                                           aria-label='Maximum Gas Percentage'
-                                                           aria-describedby='button-addon2'
-                                                           name='gas'>
-                                                    <div class='input-group-append'>
-                                                        <button type='submit' class='btn btn-outline-secondary'
-                                                                id='button-addon2'>Set
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </form>
-                                    </div>
+                                    
                                 </div>
                             </div>
                             <div class='carousel-item'>
